@@ -1,0 +1,11 @@
+[project]
+name = "render-fastapi-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[all]>=0.115.12",
+    "ruff>=0.11.13",
+    "uvicorn[standard]>=0.34.3",
+]
