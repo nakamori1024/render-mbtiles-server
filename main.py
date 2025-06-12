@@ -2,14 +2,12 @@ from typing import Optional
 
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(title="Render MBTiles Server", version="0.1.0")
 
 
 @app.get("/")
 async def root():
     return {
-        "name": "Render MBTiles Server",
-        "version": "0.1.0",
         "endpoints": {
             "/docs": "Swagger UI",
             "/health": "Check the health of the server",
