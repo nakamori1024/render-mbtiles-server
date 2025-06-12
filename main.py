@@ -5,9 +5,9 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/health")
 async def root():
-    return {"message": "Hello World"}
+    return {"status": "ok"}
 
 
 @app.get("/items/{item_id}")
