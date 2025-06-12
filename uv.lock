@@ -460,6 +460,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pymbtiles"
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/75/ff/9ae83bb0cf6c504d675b917eae3ad9e9f919fda3fea51de9f737ac0ccf27/pymbtiles-0.5.0.tar.gz", hash = "sha256:b4eb2c470d2eb3d94627cdc8a8ae448b8899af2dd696f9a5eca706ddf8293b58", size = 7071 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/82/ba/a05974655e73d7937b8e5438bf7ca5dba0b7d84dc67e98fb40c81dc92fca/pymbtiles-0.5.0-py3-none-any.whl", hash = "sha256:91c1c2fa3e25f581d563a60e705105f7277b0dbb9ff727c8c28cb66f0f891c84", size = 9002 },
+]
+
+[[package]]
 name = "python-dotenv"
 version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -513,11 +522,12 @@ wheels = [
 ]
 
 [[package]]
-name = "render-fastapi-template"
+name = "render-mbtiles-server"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["all"] },
+    { name = "pymbtiles" },
     { name = "ruff" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -525,6 +535,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["all"], specifier = ">=0.115.12" },
+    { name = "pymbtiles", specifier = ">=0.5.0" },
     { name = "ruff", specifier = ">=0.11.13" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.34.3" },
 ]
