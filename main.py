@@ -1,6 +1,5 @@
-from typing import Optional
-
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
+from pymbtiles import MBtiles
 
 app = FastAPI(title="Render MBTiles Server", version="0.1.0")
 
@@ -11,6 +10,7 @@ async def root():
         "endpoints": {
             "/docs": "Swagger UI",
             "/health": "Check the health of the server",
+            "/vector/{tile_name}/{z}/{x}/{y}.pbf": "Get vector tiles from an MBTiles file",
         },
     }
 
@@ -20,6 +20,22 @@ async def health():
     return {"status": "ok"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/vector/{file_name}/{z}/{x}/{y}.pbf")
+def vector_tile(file_name: str, z: int, x: int, y: int):
+    """
+    Serve vector tiles from an MBTiles file.
+    """
+    # xyz -> tms
+    y = 2**z - y - 1
+
+    with MBtiles(f"vector/{file_name}.mbtiles") as mbtiles:
+        tile_data = mbtiles.read_tile(z, x, y)
+
+    if tile_data is None:
+        return Response(status_code=404)
+
+    return Response(
+        content=tile_data,
+        media_type="application/vnd.mapbox-vector-tile",
+        headers={"content-encoding": "gzip"},
+    )
