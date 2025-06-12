@@ -7,7 +7,19 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {
+        "name": "Render MBTiles Server",
+        "version": "0.1.0",
+        "endpoints": {
+            "/docs": "Swagger UI",
+            "/health": "Check the health of the server",
+        },
+    }
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 
 @app.get("/items/{item_id}")
