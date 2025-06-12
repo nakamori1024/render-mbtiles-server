@@ -106,6 +106,3 @@ venv.bak/
 
 # Mac OS
 .DS_Store
-
-# tile data
-vector/
