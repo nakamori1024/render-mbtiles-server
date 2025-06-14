@@ -11,6 +11,7 @@ async def root():
             "/docs": "Swagger UI",
             "/health": "Check the health of the server",
             "/vector/{tile_name}/{z}/{x}/{y}.pbf": "Get vector tiles from an MBTiles file",
+            "/raster/{tile_name}/{z}/{x}/{y}.png": "Get raster tiles from an MBTiles file",
         },
     }
 
