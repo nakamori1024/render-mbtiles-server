@@ -11,6 +11,7 @@ async def root():
             "/docs": "Swagger UI",
             "/health": "Check the health of the server",
             "/vector/{tile_name}/{z}/{x}/{y}.pbf": "Get vector tiles from an MBTiles file",
+            "/raster/{tile_name}/{z}/{x}/{y}.png": "Get raster tiles from an MBTiles file",
         },
     }
 
@@ -39,3 +40,23 @@ def vector_tile(file_name: str, z: int, x: int, y: int):
         media_type="application/vnd.mapbox-vector-tile",
         headers={"content-encoding": "gzip"},
     )
+
+@app.get("/raster/{file_name}/{z}/{x}/{y}.png")
+def raster_tile(file_name: str, z: int, x: int, y: int):
+    """
+    Serve raster tiles from an MBTiles file.
+    """
+    # xyz -> tms
+    y = 2**z - y - 1
+
+    with MBtiles(f"raster/{file_name}.mbtiles") as mbtiles:
+        tile_data = mbtiles.read_tile(z, x, y)
+
+    if tile_data is None:
+        return Response(status_code=404)
+
+    return Response(
+        content=tile_data,
+        media_type="image/png",
+    )
+
