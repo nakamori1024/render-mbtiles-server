@@ -21,15 +21,15 @@ async def health():
     return {"status": "ok"}
 
 
-@app.get("/vector/{file_name}/{z}/{x}/{y}.pbf")
-def vector_tile(file_name: str, z: int, x: int, y: int):
+@app.get("/vector/{tile_name}/{z}/{x}/{y}.pbf")
+def vector_tile(tile_name: str, z: int, x: int, y: int):
     """
     Serve vector tiles from an MBTiles file.
     """
     # xyz -> tms
     y = 2**z - y - 1
 
-    with MBtiles(f"vector/{file_name}.mbtiles") as mbtiles:
+    with MBtiles(f"vector/{tile_name}.mbtiles") as mbtiles:
         tile_data = mbtiles.read_tile(z, x, y)
 
     if tile_data is None:
@@ -41,15 +41,15 @@ def vector_tile(file_name: str, z: int, x: int, y: int):
         headers={"content-encoding": "gzip"},
     )
 
-@app.get("/raster/{file_name}/{z}/{x}/{y}.png")
-def raster_tile(file_name: str, z: int, x: int, y: int):
+@app.get("/raster/{tile_name}/{z}/{x}/{y}.png")
+def raster_tile(tile_name: str, z: int, x: int, y: int):
     """
     Serve raster tiles from an MBTiles file.
     """
     # xyz -> tms
     y = 2**z - y - 1
 
-    with MBtiles(f"raster/{file_name}.mbtiles") as mbtiles:
+    with MBtiles(f"raster/{tile_name}.mbtiles") as mbtiles:
         tile_data = mbtiles.read_tile(z, x, y)
 
     if tile_data is None:
