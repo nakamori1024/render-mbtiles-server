@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Response
 from pymbtiles import MBtiles
 
+import utils
+
 app = FastAPI(title="Render MBTiles Server", version="0.1.0")
 
 
@@ -21,15 +23,18 @@ async def health():
     return {"status": "ok"}
 
 
-@app.get("/vector/{file_name}/{z}/{x}/{y}.pbf")
-def vector_tile(file_name: str, z: int, x: int, y: int):
+@app.get("/vector/{tile_name:path}/{z}/{x}/{y}.pbf")
+def vector_tile(tile_name: str, z: int, x: int, y: int):
     """
     Serve vector tiles from an MBTiles file.
     """
+    # Sanitize the tile name to prevent directory traversal attacks
+    tile_name = utils.sanitize_filename(tile_name)
+
     # xyz -> tms
     y = 2**z - y - 1
 
-    with MBtiles(f"vector/{file_name}.mbtiles") as mbtiles:
+    with MBtiles(f"vector/{tile_name}.mbtiles") as mbtiles:
         tile_data = mbtiles.read_tile(z, x, y)
 
     if tile_data is None:
@@ -41,15 +46,19 @@ def vector_tile(file_name: str, z: int, x: int, y: int):
         headers={"content-encoding": "gzip"},
     )
 
-@app.get("/raster/{file_name}/{z}/{x}/{y}.png")
-def raster_tile(file_name: str, z: int, x: int, y: int):
+
+@app.get("/raster/{tile_name:path}/{z}/{x}/{y}.png")
+def raster_tile(tile_name: str, z: int, x: int, y: int):
     """
     Serve raster tiles from an MBTiles file.
     """
+    # Sanitize the tile name to prevent directory traversal attacks
+    tile_name = utils.sanitize_filename(tile_name)
+
     # xyz -> tms
     y = 2**z - y - 1
 
-    with MBtiles(f"raster/{file_name}.mbtiles") as mbtiles:
+    with MBtiles(f"raster/{tile_name}.mbtiles") as mbtiles:
         tile_data = mbtiles.read_tile(z, x, y)
 
     if tile_data is None:
@@ -59,4 +68,3 @@ def raster_tile(file_name: str, z: int, x: int, y: int):
         content=tile_data,
         media_type="image/png",
     )
-
