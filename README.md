@@ -51,7 +51,7 @@ For developers who want to run the server locally:
 
 4. Start the development server:
    ```shell
-   uv run uvicorn main:app --reload  
+   uv run uvicorn main:app --reload
    ```
 
 ## Sample Data
