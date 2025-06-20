@@ -1,10 +1,18 @@
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 from pymbtiles import MBtiles
 
 import utils
 
 app = FastAPI(title="Render MBTiles Server", version="0.1.0")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for CORS
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods for CORS
+    allow_headers=["*"],  # Allow all headers for CORS
+)
 
 @app.get("/")
 async def root():
