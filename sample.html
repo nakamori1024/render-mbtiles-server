@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibre GL JS - Layer Toggle Demo</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <link
+        href="https://unpkg.com/maplibre-gl@4.1.0/dist/maplibre-gl.css"
+        rel="stylesheet"
+        integrity="sha384-m6tadjb5ohv1Fw3GJynIWn5c1scKfW7kxSXuDrhlq1gdXPn7I7UL0sSKDfCUErOb"
+        crossorigin="anonymous"
+    />
+    <script
+        src="https://unpkg.com/maplibre-gl@4.1.0/dist/maplibre-gl.js"
+        integrity="sha384-3pNy86i5zyrCrbNJElT1ZPPx8EaXDW676Upmm6GTpZsvYkot0AZeCGAolgBQKCBg"
+        crossorigin="anonymous">
+    </script>
+    
+    <!-- Add maplibre-gl-opacity plugin for layer control -->
+    <link
+        rel="stylesheet"
+        href="https://www.unpkg.com/maplibre-gl-opacity@1.8.0/build/maplibre-gl-opacity.css"
+        integrity="sha384-uc/IXBJZNozdWFTT69hgjc4AXLBdzLt05FUByDCCZaesGzZbdfq3ofZkAelLwEpD"
+        crossorigin="anonymous"
+    />
+    <script
+        src="https://www.unpkg.com/maplibre-gl-opacity@1.8.0/build/maplibre-gl-opacity.umd.js"
+        integrity="sha384-MeOEs8o0EkvYupDnYSADQisc4LrvrGGs5BU5UeW0TCPY+NkAprxXrDNpiCvkyeRy"
+        crossorigin="anonymous">
+    </script>
+
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+    // Replace with your Render app URL (e.g., https://your-app-name.onrender.com)
+    const TILE_SERVER_URL = 'https://render-mbtiles-server.onrender.com';
+
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://demotiles.maplibre.org/style.json',
+        center: [139.767, 35.681],
+        zoom: 5 // Zoom level to show entire Japan
+    });
+
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+    map.on('load', () => {
+        // Add raster tile layer (Natural Earth)
+        map.addSource('raster-source', {
+            'type': 'raster',
+            'tiles': [
+                `${TILE_SERVER_URL}/raster/NE2_50M_SR_W/{z}/{x}/{y}.png`
+            ],
+            'tileSize': 256,
+            'attribution': 'Natural Earth'
+        });
+
+        map.addLayer({
+            'id': 'raster-layer',
+            'type': 'raster',
+            'source': 'raster-source',
+            'paint': {
+                'raster-opacity': 0.4
+            },
+            'layout': {
+                'visibility': 'visible'
+            }
+        });
+
+        // Add vector tile layer (Medical Areas)
+        map.addSource('vector-source', {
+            'type': 'vector',
+            'tiles': [
+                `${TILE_SERVER_URL}/vector/medical_area/{z}/{x}/{y}.pbf`
+            ],
+            'attribution': 'Medical Areas: Based on National Land Numerical Information (Ministry of Land, Infrastructure, Transport and Tourism of Japan)'
+        });
+
+        map.addLayer({
+            'id': 'vector-layer',
+            'type': 'fill',
+            'source': 'vector-source',
+            'source-layer': 'secondary',
+            'paint': {
+                'fill-color': 'rgba(0, 255, 0, 0.4)',
+                'fill-outline-color': 'rgba(0, 255, 0, 1)'
+            },
+            'layout': {
+                'visibility': 'visible'
+            }
+        });
+
+        // Add layer toggle control
+        const opacity = new OpacityControl({
+            baseLayers: {
+                'raster-layer': 'Natural Earth Raster',
+                'vector-layer': 'Medical Areas'
+            },
+        });
+        map.addControl(opacity, 'top-left');
+    });
+</script>
+
+</body>
+</html>
